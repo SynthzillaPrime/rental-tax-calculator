@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental Property Tax Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-align: center;
+        }
+        
+        .section {
+            margin-bottom: 35px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        
+        .input-group label {
+            flex: 1;
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .input-group input {
+            width: 140px;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .custom-expense {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .custom-expense input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .custom-expense input:nth-child(2) {
+            width: 130px;
+        }
+        
+        .btn-remove {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .btn-remove:hover {
+            background: #ee5a52;
+        }
+        
+        .btn-add {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        
+        .btn-add:hover {
+            background: #5568d3;
+        }
+        
+        .totals {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        
+        .total-row label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .total-row.highlight {
+            border-top: 2px solid #ddd;
+            padding-top: 12px;
+            margin-top: 12px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .total-row.profit {
+            color: #27ae60;
+        }
+        
+        .total-row.loss {
+            color: #e74c3c;
+        }
+        
+        .amount {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .btn-print {
+            background: #764ba2;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 20px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        
+        .btn-print:hover {
+            background: #6a3f8f;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+            .btn-print, .btn-add {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rental Property Tax Calculator</h1>
+        
+        <div class="section">
+            <div class="section-title">Income</div>
+            <div class="input-group">
+                <label>Rental Income</label>
+                <input type="number" id="rentalIncome" placeholder="0" step="1" onchange="calculate()" oninput="calculate()">
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Standard Expenses</div>
+            
+            <div class="input-group">
+                <label>Mortgage Interest</label>
+                <input type="number" class="expense" placeholder="0" step="1" onchange="calculate()" oninput="calculate()">
+            </div>
+            
+            <div class="input-group">
+                <label>Landlord Insurance</label>
+                <input type="number" class="expense" placeholder="0" step="1" onchange="calculate()" oninput="calculate()">
+            </div>
+            
+            <div class="input-group">
+                <label>Rent Collection Fee</label>
+                <input type="number" class="expense" placeholder="0" step="1" onchange="calculate()" oninput="calculate()">
+            </div>
+            
+            <div class="input-group">
+                <label>Gas Safety + Boiler Service</label>
+                <input type="number" class="expense" placeholder="0" step="1" onchange="calculate()" oninput="calculate()">
+            </div>
+            
+            <div class="input-group">
+                <label>Electrical Safety Checks</label>
+                <input type="number" class="expense" placeholder="0" step="1" onchange="calculate()" oninput="calculate()">
+            </div>
+            
+            <div class="input-group">
+                <label>Maintenance Work</label>
+                <input type="number" class="expense" placeholder="0" step="1" onchange="calculate()" oninput="calculate()">
+            </div>
+            
+            <div class="input-group">
+                <label>Appliance Repairs & Replacement</label>
+                <input type="number" class="expense" placeholder="0" step="1" onchange="calculate()" oninput="calculate()">
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">Other Expenses</div>
+            <div id="customExpenses"></div>
+            <button class="btn-add" onclick="addCustomExpense()">+ Add Custom Expense</button>
+        </div>
+        
+        <div class="totals">
+            <div class="total-row">
+                <label>Total Income:</label>
+                <span class="amount" id="totalIncome">£0.00</span>
+            </div>
+            <div class="total-row">
+                <label>Total Expenses:</label>
+                <span class="amount" id="totalExpenses">£0.00</span>
+            </div>
+            <div class="total-row highlight profit" id="netResult">
+                <label>Net Profit:</label>
+                <span class="amount" id="netAmount">£0.00</span>
+            </div>
+        </div>
+        
+        <button class="btn-print" onclick="window.print()">🖨️ Print or Save as PDF</button>
+    </div>
+    
+    <script>
+        function calculate() {
+            const rentalIncome = parseFloat(document.getElementById('rentalIncome').value) || 0;
+            
+            const standardExpenses = Array.from(document.querySelectorAll('.expense'))
+                .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+            
+            const customExpenses = Array.from(document.querySelectorAll('.custom-expense-amount'))
+                .reduce((sum, input) => sum + (parseFloat(input.value) || 0), 0);
+            
+            const totalExpenses = standardExpenses + customExpenses;
+            const netResult = rentalIncome - totalExpenses;
+            
+            document.getElementById('totalIncome').textContent = '£' + rentalIncome.toFixed(0);
+            document.getElementById('totalExpenses').textContent = '£' + totalExpenses.toFixed(0);
+            document.getElementById('netAmount').textContent = '£' + Math.abs(netResult).toFixed(0);
+            
+            const netResultDiv = document.getElementById('netResult');
+            if (netResult >= 0) {
+                netResultDiv.classList.remove('loss');
+                netResultDiv.classList.add('profit');
+                netResultDiv.querySelector('label').textContent = 'Net Profit:';
+            } else {
+                netResultDiv.classList.remove('profit');
+                netResultDiv.classList.add('loss');
+                netResultDiv.querySelector('label').textContent = 'Net Loss:';
+            }
+        }
+        
+        function addCustomExpense() {
+            const container = document.getElementById('customExpenses');
+            const index = container.children.length;
+            
+            const expenseDiv = document.createElement('div');
+            expenseDiv.className = 'custom-expense';
+            expenseDiv.innerHTML = `
+                <input type="text" placeholder="Expense name" class="custom-expense-name">
+                <input type="number" placeholder="0" step="1" class="custom-expense-amount" onchange="calculate()" oninput="calculate()">
+                <button class="btn-remove" onclick="removeCustomExpense(this)">Remove</button>
+            `;
+            
+            container.appendChild(expenseDiv);
+            expenseDiv.querySelector('.custom-expense-name').focus();
+        }
+        
+        function removeCustomExpense(button) {
+            button.parentElement.remove();
+            calculate();
+        }
+        
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
